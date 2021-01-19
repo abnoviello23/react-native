@@ -10,6 +10,8 @@ import { TextInput } from 'react-native';
 import { TouchableOpacity} from "react-native";
 import { Component } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import {
   Colors,
@@ -50,18 +52,33 @@ class My_Input extends Component {
         );
     };
 
+    placeholderforTextInput = () => {
+        return (
+            <View>
+                <FontAwesomeIcon icon={faSearch} size={10} style={{ color: 'grey' }} />
+                <Text>Search</Text>
+            </View>
+            );
+    };
+
 render() {
     let half1 = 'https://npiregistry.cms.hhs.gov/api/?first_name='
     let half2 = '&city=&limit=20&version=2.1'
     let loaded
-    if (!this.state.result.results) {
+    if (!this.state.result.results && this.state.user_input) {
         loaded = true;
     }
         return (
             <View style={styles.body}>
-                <TextInput
-                    placeholder="Search"
-                    onChangeText={this.handleInput} />
+                <Text style={styles.headertext}>NPI Registry Search</Text>
+                <View style={styles.input}>
+                    {/*<FontAwesomeIcon icon={faSearch} size={10} style={{ color: 'grey' }} />*/}
+                    <TextInput
+                        style={styles.fontawesomefamily}
+                        placeholder="&#xf002; Search"
+                        onChangeText={this.handleInput}
+                        />
+                </View>
                 <TouchableOpacity
                     style={styles.submitButton}
                     onPress={
@@ -79,7 +96,7 @@ render() {
                                 data={this.state.result.results}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={
-                                    ({ item }) => <View style={styles.renderIteminList}><Text style={styles.listrendertext}>{item.basic.last_name}, {item.basic.first_name}, {item.addresses[0].address_1}</Text></View>
+                                    ({ item }) => <View style={styles.renderIteminList}><Text style={styles.renderIteminListLarge}>{item.basic.last_name}, {item.basic.first_name}</Text><Text>{item.addresses[0].address_1}</Text></View>
                                 }
                                 ListEmptyComponent={this.emptyListView}
                             />
@@ -110,7 +127,22 @@ const App = () => {
 const styles = StyleSheet.create({
   body: {
       backgroundColor: Colors.white,
-      marginTop: 32,
+      margin: 15,
+    },
+    inputstyle: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderColor: '#000',
+        paddingBottom: 10,
+
+    },
+    headertext: {
+        fontSize: 50,
+        margin: 15,
+        textAlign: 'center',
+    },
+    fontawesomefamily: {
+        fontFamily:'fontAwesome',
     },
     body2: {
         marginTop: 10,
@@ -123,12 +155,20 @@ const styles = StyleSheet.create({
     },
     submitButtonText: {
         color: 'white',
+        fontSize: 20,
+        textAlign: 'center',
     },
     renderIteminList: {
         padding: 0,
-        height: 25,
+        height: 50,
         borderWidth: 1,
         borderRadius: 1,
+    },
+    renderIteminListLarge: {
+        padding: 0,
+        height: 25,
+        fontSize: 20,
+        color: 'blue',
     },
     listrendertext: {
         color: 'blue',
