@@ -1,33 +1,18 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
 
 import React from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
 } from 'react-native';
 
 import { TextInput } from 'react-native';
 import { TouchableOpacity} from "react-native";
-import { useState } from "react";
 import { Component } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
 
 import {
-  Header,
-  LearnMoreLinks,
   Colors,
-  DebugInstructions,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
 class My_Input extends Component {
@@ -52,6 +37,10 @@ class My_Input extends Component {
                 })
                 //alert(JSON.stringify(this.state.result));
             })
+            .catch((error) => {
+                alert(JSON.stringify(error));
+                console.error(error);
+            });
     }
     emptyListView = () => {
         return (
@@ -62,8 +51,12 @@ class My_Input extends Component {
     };
 
 render() {
-    const half1 = 'https://npiregistry.cms.hhs.gov/api/?first_name='
-    const half2 ='&city=&limit=20&version=2.1'
+    let half1 = 'https://npiregistry.cms.hhs.gov/api/?first_name='
+    let half2 = '&city=&limit=20&version=2.1'
+    let loaded
+    if (!this.state.result.results) {
+        loaded = true;
+    }
         return (
             <View style={styles.body}>
                 <TextInput
@@ -76,23 +69,23 @@ render() {
                     }>
                     <Text style={styles.submitButtonText}> Submit </Text>
                 </TouchableOpacity>
-                <View style={styles.body}>
-                    <ActivityIndicator size="large" />
-                </View>
-                <View style={styles.body}>
-                    {/*<Text>
-                        {JSON.stringify(this.state.result.results)}
-                    </Text>*/}
-                    <FlatList
-                        data={this.state.result.results}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={
-                            ({ item }) => <Text>{item.basic.last_name}</Text>
-                        } 
-                    />
-                </View>
+                <View>
+                    
+                    {loaded ? (<View style={styles.activityindicatorbar}><ActivityIndicator size="large" color="red" /></View>) :
 
-               
+                        <View style={styles.body2}>
+
+                            <FlatList
+                                data={this.state.result.results}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={
+                                    ({ item }) => <View style={styles.renderIteminList}><Text style={styles.listrendertext}>{item.basic.last_name}, {item.basic.first_name}, {item.addresses[0].address_1}</Text></View>
+                                }
+                                ListEmptyComponent={this.emptyListView}
+                            />
+                        </View>
+                    }
+                </View>
             </View>
             )
 
@@ -115,65 +108,34 @@ const App = () => {
 
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
   body: {
       backgroundColor: Colors.white,
       marginTop: 32,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
     },
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        paddingHorizontal: 10
-    },
-    button: {
-        alignItems: "center",
-        backgroundColor: "#DDDDDD",
-        padding: 10
-    },
-    countContainer: {
-        alignItems: "center",
-        padding: 10
+    body2: {
+        marginTop: 10,
     },
        submitButton: {
         backgroundColor: '#0000ff',
-        padding: 10,
-        margin: 15,
+        padding: 5,
+        margin: 10,
         height: 40,
     },
     submitButtonText: {
-        color: 'white'
+        color: 'white',
+    },
+    renderIteminList: {
+        padding: 0,
+        height: 25,
+        borderWidth: 1,
+        borderRadius: 1,
+    },
+    listrendertext: {
+        color: 'blue',
+    },
+    activityindicatorbar: {
+        color: 'red',
+        height: 25
     }
 });
 
